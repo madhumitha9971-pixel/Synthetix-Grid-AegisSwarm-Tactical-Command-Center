@@ -1,0 +1,109 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Volume2, VolumeX, ShieldAlert } from 'lucide-react';
+
+export default function SirenController({ consensusScore, threshold = 85 }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioCtxRef = useRef(null);
+  const osc1Ref = useRef(null);
+  const osc2Ref = useRef(null);
+  const lfoRef = useRef(null);
+
+  const isCritical = consensusScore >= threshold;
+
+  const startSiren = () => {
+    if (isPlaying) return;
+
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
+    audioCtxRef.current = ctx;
+
+    // Carrier Oscillators (Dual-Tone: 600Hz & 950Hz)
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    const lfo = ctx.createOscillator();
+    const lfoGain = ctx.createGain();
+
+    osc1.type = 'sawtooth';
+    osc2.type = 'sine';
+    osc1.frequency.setValueAtTime(600, ctx.currentTime);
+    osc2.frequency.setValueAtTime(950, ctx.currentTime);
+
+    // LFO Siren Sweep Modulation (1.5 Hz modulation frequency)
+    lfo.type = 'sine';
+    lfo.frequency.setValueAtTime(1.5, ctx.currentTime);
+    lfoGain.gain.setValueAtTime(150, ctx.currentTime);
+
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc1.frequency);
+    lfoGain.connect(osc2.frequency);
+
+    gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+
+    osc1.connect(gainNode);
+    osc2.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    osc1.start();
+    osc2.start();
+    lfo.start();
+
+    osc1Ref.current = osc1;
+    osc2Ref.current = osc2;
+    lfoRef.current = lfo;
+
+    setIsPlaying(true);
+  };
+
+  const stopSiren = () => {
+    if (osc1Ref.current) osc1Ref.current.stop();
+    if (osc2Ref.current) osc2Ref.current.stop();
+    if (lfoRef.current) lfoRef.current.stop();
+    if (audioCtxRef.current) audioCtxRef.current.close();
+
+    setIsPlaying(false);
+  };
+
+  useEffect(() => {
+    if (isCritical && !isPlaying) {
+      startSiren();
+    } else if (!isCritical && isPlaying) {
+      stopSiren();
+    }
+    return () => stopSiren();
+  }, [consensusScore]);
+
+  return (
+    <div className={`p-4 rounded-xl border transition-all ${
+      isCritical 
+        ? 'bg-red-950/40 border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.3)]' 
+        : 'bg-slate-900/60 border-slate-800'
+    }`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={`p-2.5 rounded-lg ${isCritical ? 'bg-red-500/20 text-red-400 animate-pulse' : 'bg-slate-800 text-slate-400'}`}>
+            <ShieldAlert className="w-5 h-5" />
+          </div>
+          <div>
+            <h4 className="font-semibold text-sm text-slate-200">Acoustic Emergency Directive</h4>
+            <p className="text-xs text-slate-400">
+              {isCritical ? `CRITICAL ANOMALY DETECTED (${consensusScore}% >= ${threshold}%)` : 'Monitoring Active — Nominal State'}
+            </p>
+          </div>
+        </div>
+        
+        <button
+          onClick={isPlaying ? stopSiren : startSiren}
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            isPlaying 
+              ? 'bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-600/30' 
+              : 'bg-slate-800 hover:bg-slate-700 text-slate-300'
+          }`}
+        >
+          {isPlaying ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+          {isPlaying ? 'MUTE SIREN' : 'TEST SIREN'}
+        </button>
+      </div>
+    </div>
+  );
+}
