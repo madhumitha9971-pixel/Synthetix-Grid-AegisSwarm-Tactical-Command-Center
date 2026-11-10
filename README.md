@@ -20,7 +20,6 @@
 
 * **Team Name:** Innovexa[span_1](start_span)[span_1](end_span)
 * **Author / Lead Developer:** D. Madhumitha[span_2](start_span)[span_2](end_span)
-* **Project Partner / Collaborator:** Paneer Raj .M
 * **AI Core Engine:** Groq API (`llama3-70b-8192`)[span_3](start_span)[span_3](end_span)[span_4](start_span)[span_4](end_span)
 
 We split the codebase into a modular multi-tier setup: **Client App & Portals** (`apps/web`), **AI Gateway & ML Engine** (`services/api`), **ML Models & Downscaling** (`ml`), and **Data Contracts** (`packages/contracts`).
