@@ -102,7 +102,8 @@ Standard meteorological and disaster warning systems often fail at local micro-b
               [ Log Nominal State ]                       [ Trigger Web Audio Siren ]
                                                           [ Dispatch CAP 1.2 Payload ]
 
-5. System Architecture
+
+##5. System Architecture
 
 flowchart LR
     subgraph Browser ["Browser Application (React 18 + Vite)"]
@@ -128,7 +129,7 @@ flowchart LR
     UI -->|Trigger >= 85%| AUDIO
     UI -->|Render Vectors| R3F
 
-6. Tech Stack
+##6. Tech Stack
 
 LayerTechnologies & Libraries
 Frontend UI / UXReact 18, TypeScript, Tailwind CSS, Lucide Icons
@@ -138,13 +139,14 @@ AI / Swarm ConsensusGroq LPU SDK (llama3-70b-8192)
 Backend ServiceFastAPI (Python 3.11), Pydantic v2, Uvicorn
 Spatial / ML ProcessingXGBoost, PostGIS, Open-Meteo Data Pipelines
 
-7. System Performance Metrics & Mitigation
+##7. System Performance Metrics & Mitigation
 ​LLM Latency: ~480 ms (Groq LPU Engine)
 ​Audio Alert Response: 15 ms (Native Web Audio API)
 ​3D Render Loop: 60 FPS (Three.js WebGL Canvas)
 ​Consensus Gate: \ge 85\% Confidence Threshold
 ​False-Positive Mitigation: Multi-node consensus requires independent validation across Node Alpha (IoT telemetry) and Node Beta (topography solver) before triggering acoustic emergency sirens, eliminating single-sensor spike anomalies.
-​8. Run It Locally
+
+##​8. Run It Locally
 ​Prerequisites
 ​Node.js (v18+)
 ​Python (v3.11+)
@@ -180,7 +182,8 @@ uvicorn app.main:app --reload --port 8000
 npm run dev
 
 Open http://localhost:5173 in your browser.
-​9. Repository Directory Structure
+
+##​9. Repository Directory Structure
 
 AegisSwarm-Flood-Consensus/
 ├── apps/
@@ -216,7 +219,7 @@ AegisSwarm-Flood-Consensus/
 ├── README.md
 └── vite.config.js
 
-10. Roadmap & Future Enhancements
+##10. Roadmap & Future Enhancements
 ​Autonomous Evacuation Route Engine: Dynamic A* pathfinding to auto-calculate and render real-time escape corridors on the 3D map based on live flooding vectors.
 ​Offline WebAssembly (WASM) Local Fallback: Client-side ONNX Runtime / WebAssembly inference module so swarm consensus voting continues locally during total WAN failure.
 ​Automated CAP/EDXL Emergency Dispatch: Standard Common Alerting Protocol (CAP 1.2) XML/JSON export capabilities to directly broadcast structured emergency alerts to local responder systems.
