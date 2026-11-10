@@ -102,4 +102,7 @@ Standard meteorological and disaster warning systems often fail at local micro-b
               [ Log Nominal State ]                       [ Trigger Web Audio Siren ]
                                                           [ Dispatch CAP 1.2 Payload ]
 
+consensus Formula 
+
+  consensus score = 0.40.node(alfa)+0.35.node(beta)+0.25.node(gama)
 
